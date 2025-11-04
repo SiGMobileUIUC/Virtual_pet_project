@@ -4,15 +4,16 @@ import { Text } from '@/components/ui/text';
 import { Link, Stack } from 'expo-router';
 import { MoonStarIcon, StarIcon, SunIcon } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { Image, type ImageStyle, View } from 'react-native';
+import { useRouter } from 'expo-router';
 
 const LOGO = {
   light: require('@/assets/images/react-native-reusables-light.png'),
   dark: require('@/assets/images/react-native-reusables-dark.png'),
 };
 
-const SCREEN_OPTIONS = {
+export let SCREEN_OPTIONS = {
   title: 'React Native Reusables',
   headerTransparent: true,
   headerRight: () => <ThemeToggle />,
@@ -25,6 +26,15 @@ const IMAGE_STYLE: ImageStyle = {
 
 export default function Screen() {
   const { colorScheme } = useColorScheme();
+  const router = useRouter();
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      router.replace("/auth");
+    }, 0);
+
+    return () => clearTimeout(timeout);
+  }, []);
 
   return (
     <>
@@ -62,7 +72,7 @@ const THEME_ICONS = {
   dark: MoonStarIcon,
 };
 
-function ThemeToggle() {
+export function ThemeToggle() {
   const { colorScheme, toggleColorScheme } = useColorScheme();
 
   return (

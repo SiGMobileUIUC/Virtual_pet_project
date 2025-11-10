@@ -4,8 +4,9 @@ import { Text } from '@/components/ui/text';
 import { Link, Stack } from 'expo-router';
 import { MoonStarIcon, StarIcon, SunIcon } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { Image, type ImageStyle, View } from 'react-native';
+import { useRouter } from 'expo-router';
 
 const LOGO = {
   light: require('@/assets/images/react-native-reusables-light.png'),
@@ -13,7 +14,7 @@ const LOGO = {
 };
 
 const SCREEN_OPTIONS = {
-  title: 'Squirrel Pet',
+  title: 'React Native Reusables',
   headerTransparent: true,
   headerRight: () => <ThemeToggle />,
 };
@@ -28,68 +29,15 @@ const apiUrl = 'https://10.193.24.21:3000/pet';
 
 export default function Screen() {
   const { colorScheme } = useColorScheme();
-  const [name, setName] = React.useState('');
-  const [xp, setXp] = React.useState(0);
+  const router = useRouter();
 
-  //Fetching info from backend
-  React.useEffect(() => {
-    async function fetchPetData() {
-      try {
-        const response = await fetch(apiUrl);
-        const data = await response.json();
-        setName(data.name || 'UIUCSquirrel');
-        setXp(data.xp || 0);
-      } catch (error) {
-        // console.error('Error fetching pet data:', error);
-        setName("Mariah Carrey");
-        setXp(xp + 1);
-      }
-    }
-    fetchPetData();
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      router.replace("/auth");
+    }, 0);
+
+    return () => clearTimeout(timeout);
   }, []);
-
-
-  //put request to update name
-  const updateName = async (newName: string) => {
-    try {
-      const response = await fetch(`${apiUrl}/name`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: newName }),
-      });
-      if (response.ok) {
-        setName(newName);
-      } else {
-        // console.error('Failed to update name');
-        setName("Maple");
-      }
-    } catch (error) {
-      // console.error('Error updating name:', error);
-      setName("UIUC");
-    }
-  };
-
-  //put request to add 1 xp
-  const addXp = async (amount: number) => {
-    try {
-      const response = await fetch(`${apiUrl}/xp`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ xp: 1 }),
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setXp(data.xp);
-      } else {
-        // console.error('Failed to add XP');
-       setXp(prevXp => (isNaN(prevXp) ? 0 : prevXp + 1));
-      }
-    } catch (error) {
-      // console.error('Error adding XP:', error);
-      setXp(prevXp => (isNaN(prevXp) ? 0 : prevXp + 1));
-    }
-  };
-
 
   return (
     <>
@@ -125,7 +73,7 @@ const THEME_ICONS = {
   dark: MoonStarIcon,
 };
 
-function ThemeToggle() {
+export function ThemeToggle() {
   const { colorScheme, toggleColorScheme } = useColorScheme();
 
   return (

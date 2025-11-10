@@ -2,19 +2,18 @@ import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
 import { Text } from '@/components/ui/text';
 import { Link, Stack } from 'expo-router';
-import { MoonStarIcon, StarIcon, SunIcon } from 'lucide-react-native';
+import { MoonStarIcon, StarIcon, SunIcon, TypeOutline } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
-import { useState, useEffect } from 'react';
+import * as React from 'react';
 import { Image, type ImageStyle, View } from 'react-native';
-import { useRouter } from 'expo-router';
 
 const LOGO = {
   light: require('@/assets/images/react-native-reusables-light.png'),
   dark: require('@/assets/images/react-native-reusables-dark.png'),
 };
 
-export let SCREEN_OPTIONS = {
-  title: 'React Native Reusables',
+const SCREEN_OPTIONS = {
+  title: 'Pet Widget',
   headerTransparent: true,
   headerRight: () => <ThemeToggle />,
 };
@@ -26,43 +25,29 @@ const IMAGE_STYLE: ImageStyle = {
 
 export default function Screen() {
   const { colorScheme } = useColorScheme();
-  const router = useRouter();
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      router.replace("/auth");
-    }, 0);
-
-    return () => clearTimeout(timeout);
-  }, []);
 
   return (
     <>
-      <Stack.Screen options={SCREEN_OPTIONS} />
-      <View className="flex-1 items-center justify-center gap-8 p-4">
-        <Image source={LOGO[colorScheme ?? 'light']} style={IMAGE_STYLE} resizeMode="contain" />
-        <View className="gap-2 p-4">
-          <Text className="ios:text-foreground font-mono text-sm text-muted-foreground">
-            1. Edit <Text variant="code">app/index.tsx</Text> to get started.
-          </Text>
-          <Text className="ios:text-foreground font-mono text-sm text-muted-foreground">
-            2. Save to see your changes instantly.
-          </Text>
+    <Stack.Screen options={SCREEN_OPTIONS} />
+      <View className="flex-1 items-center p-10">
+        <View className="items-center pb-10">
+          <Text className="text-3xl font-bold">Your Pet:</Text>
+          <Text className="text-3xl font-bold">Pet Name</Text>
         </View>
-        <View className="flex-row gap-2">
-          <Link href="https://reactnativereusables.com" asChild>
-            <Button>
-              <Text>Browse the Docs</Text>
+
+        <View className="w-80 h-80 border-4 border" />
+
+        <View className="flex-1" /> {/* This pushes buttons down */}
+          <View className="flex-row gap-4 mb-10">
+            <Button variant="outline" className="px-6 py-4">
+              <Text className="text-xl">Feed</Text>
             </Button>
-          </Link>
-          <Link href="https://github.com/founded-labs/react-native-reusables" asChild>
-            <Button variant="ghost">
-              <Text>Star the Repo</Text>
-              <Icon as={StarIcon} />
+            <Button variant="outline" className="px-6 py-4">
+              <Text className="text-xl">Play</Text>
             </Button>
-          </Link>
-        </View>
+          </View>
       </View>
+
     </>
   );
 }
@@ -72,7 +57,7 @@ const THEME_ICONS = {
   dark: MoonStarIcon,
 };
 
-export function ThemeToggle() {
+function ThemeToggle() {
   const { colorScheme, toggleColorScheme } = useColorScheme();
 
   return (

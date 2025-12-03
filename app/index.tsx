@@ -1,10 +1,12 @@
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
+import { Progress } from '@/components/ui/progress';
 import { Text } from '@/components/ui/text';
 import { Link, Stack } from 'expo-router';
 import { MoonStarIcon, StarIcon, SunIcon, TypeOutline } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { Image, type ImageStyle, View } from 'react-native';
 
 const LOGO = {
@@ -23,9 +25,26 @@ const IMAGE_STYLE: ImageStyle = {
   width: 76,
 };
 
+
 export default function Screen() {
   const { colorScheme } = useColorScheme();
+  const [count, setCount] = useState(0);
+  const [progress, setProgress] = React.useState(0);
+  const [level, setLevel] = useState(1);
 
+
+  useEffect(() => {
+    if (count ==20) {
+      setCount(count * 2);
+    }
+  }, [count])
+  useEffect(() => {
+    if (progress >= 100) {
+      setProgress(progress % 100);
+      setLevel(level + 1);
+    }
+
+  }, [level, progress])
   return (
     <>
     <Stack.Screen options={SCREEN_OPTIONS} />
@@ -35,17 +54,32 @@ export default function Screen() {
           <Text className="text-3xl font-bold">Pet Name</Text>
         </View>
 
+        <View className="flex-row items-center gap-4 mb-10 w-full px-40">
+          <Text className="text-x1 font-bold">XP</Text> 
+          <Progress value={progress} className="flex-1 h-4"/>
+          <Text className="text-x1 font-bold">Lvl {level}</Text>
+        </View>
+ 
         <View className="w-80 h-80 border-4 border" />
 
-        <View className="flex-1" /> {/* This pushes buttons down */}
+        <View className="flex-1" /> 
           <View className="flex-row gap-4 mb-10">
-            <Button variant="outline" className="px-6 py-4">
+            <Button 
+              variant="outline" 
+              className="px-6 py-4" 
+              onPress={() => 
+                setProgress(progress + 10)}>
               <Text className="text-xl">Feed</Text>
             </Button>
-            <Button variant="outline" className="px-6 py-4">
+            <Button 
+              variant="outline" 
+              className="px-6 py-4"
+              onPress={() => setProgress(progress + 15)}>
               <Text className="text-xl">Play</Text>
             </Button>
           </View>
+          {count}
+          <Button onPress={() => setCount(count + 5)}/>
       </View>
 
     </>

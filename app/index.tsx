@@ -8,7 +8,7 @@ import { useColorScheme } from 'nativewind';
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { Image, type ImageStyle, View } from 'react-native';
-hello
+
 const LOGO = {
   light: require('@/assets/images/react-native-reusables-light.png'),
   dark: require('@/assets/images/react-native-reusables-dark.png'),
@@ -25,33 +25,66 @@ const IMAGE_STYLE: ImageStyle = {
   width: 76,
 };
 
+const API_BASE = 'http://localhost:3000';
+
 
 export default function Screen() {
   const { colorScheme } = useColorScheme();
   const [count, setCount] = useState(0);
-  const [progress, setProgress] = React.useState(0);
-  const [level, setLevel] = useState(1);
 
+  const[petName, setPetName] = useState("...");
+  const [xp, setXp] = useState(0);
 
   useEffect(() => {
-    if (count ==20) {
+  (async () => {
+    try {
+      const res = await fetch(`${API_BASE}/pet`);
+      const data = await res.json();
+      setPetName(data.name);
+      setXp(data.xp);
+    } catch (e) {
+      console.log("Failed to load pet:", e);
+    }})();
+  }, []);
+
+  const progress = xp % 100;
+  const level = Math.floor(xp / 100) + 1;
+
+  useEffect(() => {
+    if (count == 20) {
       setCount(count * 2);
     }
-  }, [count])
-  useEffect(() => {
-    if (progress >= 100) {
-      setProgress(progress % 100);
-      setLevel(level + 1);
+  }, [count]);
+  
+  const handleFeed = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/feed`, { method: "POST" });
+      const data = await res.json();
+      setPetName(data.squirrel.name);
+      setXp(data.squirrel.xp);
+    } catch (e) {
+      console.log("Feed failed:", e);
     }
+  };
 
-  }, [level, progress])
+  const handlePlay = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/play`, { method: 'POST' });
+      const data = await res.json();
+      setPetName(data.squirrel.name);
+      setXp(data.squirrel.xp);
+    } catch (e) {
+      console.log('Play failed:', e);
+    }
+  };
+
   return (
     <>
     <Stack.Screen options={SCREEN_OPTIONS} />
       <View className="flex-1 items-center p-10">
         <View className="items-center pb-10">
           <Text className="text-3xl font-bold">Your Pet:</Text>
-          <Text className="text-3xl font-bold">Pet Name</Text>
+          <Text className="text-3xl font-bold">{petName}</Text>
         </View>
 
         <View className="flex-row items-center gap-4 mb-10 w-full px-40">
@@ -67,14 +100,13 @@ export default function Screen() {
             <Button 
               variant="outline" 
               className="px-6 py-4" 
-              onPress={() => 
-                setProgress(progress + 10)}>
+              onPress={handleFeed}>
               <Text className="text-xl">Feed</Text>
             </Button>
             <Button 
               variant="outline" 
               className="px-6 py-4"
-              onPress={() => setProgress(progress + 15)}>
+              onPress={handlePlay}>
               <Text className="text-xl">Play</Text>
             </Button>
           </View>

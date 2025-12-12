@@ -1,5 +1,11 @@
+const cors = require("cors");
 const express = require('express');
 const app = express();
+
+app.use(cors({
+  origin: "http://localhost:8081",
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+}));
 
 app.use(express.json());
 
@@ -32,6 +38,22 @@ app.put("/pet/xp", (req, res) => {
     squirrelData.xp += xp;
     res.json({ message: "Pet XP updated", squirrel: squirrelData });
 });
+
+app.post("/feed", (req, res) => {
+  const FEED_XP = 10;
+  squirrelData.xp = Number(squirrelData.xp) || 0;
+  squirrelData.xp += FEED_XP;
+  res.json({ message: "Pet fed", squirrel: squirrelData });
+});
+
+app.post("/play", (req, res) => {
+  const PLAY_XP = 15;
+  squirrelData.xp = Number(squirrelData.xp) || 0;
+  squirrelData.xp += PLAY_XP;
+  res.json({ message: "Played with pet", squirrel: squirrelData });
+});
+
+
 
 //updates name
 app.put("/pet/name", (req, res) => {

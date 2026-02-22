@@ -3,6 +3,8 @@ const app = express();
 
 app.use(express.json());
 
+
+
 let squirrelData = {
     name: "Nutty",
     xp: 0,

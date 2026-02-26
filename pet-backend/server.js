@@ -4,6 +4,7 @@ const app = express();
 app.use(express.json());
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
 
 
@@ -16,6 +17,8 @@ let squirrelData = {
 app.get("/", (req, res) => {
   res.send("Welcome to the Virtual Pet API 🐿️");
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 app.post("/", async(req, res) => {

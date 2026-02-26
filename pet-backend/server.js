@@ -3,6 +3,7 @@ const app = express();
 
 app.use(express.json());
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
 
 
@@ -15,6 +16,8 @@ let squirrelData = {
 app.get("/", (req, res) => {
   res.send("Welcome to the Virtual Pet API 🐿️");
 =======
+=======
+>>>>>>> Stashed changes
 app.post("/", async(req, res) => {
     con.query("UPDATE users SET username= 'ari' WHERE username='Maple'");
     const response = await con.query("SELECT * FROM users");

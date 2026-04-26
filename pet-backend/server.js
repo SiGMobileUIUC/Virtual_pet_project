@@ -9,13 +9,29 @@ con.connect().then(() => console.log("Connected"));
 
 app.use(express.json());
 
+app.get("/", async(req, res) => {
+    try {
+        let pet_name = "Squirrel";
+        let user_id = "1";
+        con.query("INSERT INTO pets (pet_id, pet_name, xp, user_id VALUES ($1, 0, $3)", [pet_name, user_id]) ;
+        const response = await con.query("SELECT * FROM pets");
+        console.log(response.rows);
+        res.send("hello");
+    } catch (e) {
+        console.log(e);
+        res.status(500).send("internal server error");
+    }
 
-app.post("/", async(req, res) => {
-    con.query("UPDATE users SET pet_name= 'squirrel' WHERE username='maple'");
-    const response = await con.query("SELECT * FROM users");
-    console.log(response.rows);
-    res.send("hello");
-});
+})
+
+// app.get("/", async(req, res) => {
+//     // con.query("UPDATE pet SET pet_name= 'squirrel' WHERE username='maple'");
+//     const response = await con.query("SELECT * FROM users");
+//     console.log(response.rows);
+//     res.send("hello");
+// });
+
+
 
 
 // app.use(express.json());

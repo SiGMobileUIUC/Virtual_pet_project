@@ -9,20 +9,39 @@ con.connect().then(() => console.log("Connected"));
 
 app.use(express.json());
 
-app.get("/", async(req, res) => {
-    try {
-        let pet_name = "Squirrel";
-        let user_id = "1";
-        con.query("INSERT INTO pets (pet_id, pet_name, xp, user_id VALUES ($1, 0, $3)", [pet_name, user_id]) ;
-        const response = await con.query("SELECT * FROM pets");
-        console.log(response.rows);
-        res.send("hello");
+
+//frontend sends request to xp
+app.post("/add-xp", async(req, res) => {
+     try {
+        let data = req.body;
+        let feed = data.feed ? 5 : 10
+        await con.query("UPDATE pets SET xp=xp+$1 WHERE pet_id = $2", [feed, data.pet_id]);
+        res.status(200).send("works");
     } catch (e) {
         console.log(e);
         res.status(500).send("internal server error");
     }
-
 })
+
+//give frontend access to pet info
+app.get("/pet-info", async(req, res) =>{
+    try {
+        let data = req.body;
+        let result = await con.query("SELECT * FROM pets WHERE user_id = $1", [data.user_id]);
+        res.status(200).send(result.rows);
+    } catch (e) {
+        console.log(e);
+        res.status(500).send("internal server error");
+    }
+})
+
+
+
+
+
+
+
+
 
 // app.get("/", async(req, res) => {
 //     // con.query("UPDATE pet SET pet_name= 'squirrel' WHERE username='maple'");
@@ -30,9 +49,6 @@ app.get("/", async(req, res) => {
 //     console.log(response.rows);
 //     res.send("hello");
 // });
-
-
-
 
 // app.use(express.json());
 

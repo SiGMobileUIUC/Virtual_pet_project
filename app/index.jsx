@@ -4,8 +4,9 @@ import { Text } from '@/components/ui/text';
 import { Link, Stack } from 'expo-router';
 import { MoonStarIcon, StarIcon, SunIcon } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
-import * as React from 'react';
-import { Image, type ImageStyle, View } from 'react-native';
+import { useState, useEffect } from 'react';
+import { Image, View } from 'react-native';
+import { useRouter } from 'expo-router';
 
 const LOGO = {
   light: require('@/assets/images/react-native-reusables-light.png'),
@@ -18,21 +19,23 @@ const SCREEN_OPTIONS = {
   headerRight: () => <ThemeToggle />,
 };
 
-const IMAGE_STYLE: ImageStyle = {
+const IMAGE_STYLE= {
   height: 76,
   width: 76,
 };
 
-const apiUrl = 'https://10.193.24.21:3000/pet';
+const FEED_XP = 5;
+const PLAY_XP = 10;
+
+const apiUrl = 'http://localhost:3000';
 
 
 export default function Screen() {
   const { colorScheme } = useColorScheme();
-  const [name, setName] = React.useState('');
-  const [xp, setXp] = React.useState(0);
+  const [name, setName] = useState('');
+  const [xp, setXp] = useState(0);
 
-  //Fetching info from backend
-  React.useEffect(() => {
+  useEffect(() => {
     async function fetchPetData() {
       try {
         const response = await fetch(apiUrl);
@@ -40,7 +43,6 @@ export default function Screen() {
         setName(data.name || 'UIUCSquirrel');
         setXp(data.xp || 0);
       } catch (error) {
-        // console.error('Error fetching pet data:', error);
         setName("Mariah Carrey");
         setXp(xp + 1);
       }
@@ -48,44 +50,17 @@ export default function Screen() {
     fetchPetData();
   }, []);
 
-
-  //put request to update name
-  const updateName = async (newName: string) => {
+  const addXp = async (xp) => {
     try {
-      const response = await fetch(`${apiUrl}/name`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: newName }),
+      const response = await fetch(`${apiUrl}/add-xp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pet_id: 2, xp }),
       });
-      if (response.ok) {
-        setName(newName);
-      } else {
-        // console.error('Failed to update name');
-        setName("Maple");
-      }
-    } catch (error) {
-      // console.error('Error updating name:', error);
-      setName("UIUC");
-    }
-  };
-
-  //put request to add 1 xp
-  const addXp = async (amount: number) => {
-    try {
-      const response = await fetch(`${apiUrl}/xp`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ xp: 1 }),
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setXp(data.xp);
-      } else {
-        // console.error('Failed to add XP');
+      if (!response.ok) {
        setXp(prevXp => (isNaN(prevXp) ? 0 : prevXp + 1));
       }
-    } catch (error) {
-      // console.error('Error adding XP:', error);
+    } catch (_) {
       setXp(prevXp => (isNaN(prevXp) ? 0 : prevXp + 1));
     }
   };
@@ -98,21 +73,23 @@ export default function Screen() {
         {/* <Image source={LOGO[colorScheme ?? 'light']} style={IMAGE_STYLE} resizeMode="contain" /> */}
         <Text>🐿️</Text>
         <View className="gap-2 p-4">
-          <Text className="ios:text-foreground font-mono text-sm text-muted-foreground">
+          <Text className="font-mono text-sm text-muted-foreground">
             Welcome to Squirrel Pet! 🐿️
-          </Text>
-          <Text className="ios:text-foreground font-mono text-sm text-muted-foreground">
-            Above is your first squirrel.
           </Text>
         </View>
         <View className="flex-row gap-2">
-            <Button onPress={() => updateName('New Name')}>
-              <Text>Name Pet: {name}</Text>
+            <Button onPress={() => {
+              addXp(FEED_XP);
+              setXp(xp + FEED_XP);
+            }}>
+              <Text>Feed ({FEED_XP} XP)</Text>
             </Button>
 
-            <Button onPress={() => addXp(10)}>
-              <Text>Add XP:</Text>
-              <Text>{xp}</Text>
+            <Button onPress={() => {
+              addXp(PLAY_XP);
+              setXp(xp + PLAY_XP);
+            }}>
+              <Text>Play ({PLAY_XP} XP)</Text>
             </Button>
         </View>
       </View>
@@ -125,7 +102,7 @@ const THEME_ICONS = {
   dark: MoonStarIcon,
 };
 
-function ThemeToggle() {
+export function ThemeToggle() {
   const { colorScheme, toggleColorScheme } = useColorScheme();
 
   return (

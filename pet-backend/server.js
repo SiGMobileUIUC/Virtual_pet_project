@@ -1,5 +1,7 @@
 const express = require('express');
+const cors = require('cors')
 const app = express();
+
 const {Client} = require('pg');
 require('dotenv').config();
 
@@ -8,14 +10,14 @@ const con = new Client(process.env.DATABASE_URL);
 con.connect().then(() => console.log("Connected"));
 
 app.use(express.json());
-
+app.use(cors());
 
 //frontend sends request to xp
 app.post("/add-xp", async(req, res) => {
      try {
         let data = req.body;
-        let feed = data.feed ? 5 : 10
-        await con.query("UPDATE pets SET xp=xp+$1 WHERE pet_id = $2", [feed, data.pet_id]);
+        await con.query("UPDATE pets SET xp=xp+$1 WHERE pet_id = $2", [data.xp, data.pet_id]);
+        console.log(`200 OK: ${data.xp} X added to pet with ID ${data.pet_id}`);
         res.status(200).send("works");
     } catch (e) {
         console.log(e);

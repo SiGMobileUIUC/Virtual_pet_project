@@ -12,11 +12,20 @@ con.connect().then(() => console.log("Connected"));
 app.use(express.json());
 app.use(cors());
 
+<<<<<<< HEAD
 //create a new pet in the pets table
 app.post("/new-pet", async(req, res) => {
      try {
         let data = req.body;
         await con.query("INSERT INTO pets (pet_name, xp, user_id) VALUES ($1, $2, $3)", [req.pet_name, 0, req.user_id]);
+=======
+//frontend sends request to xp
+app.post("/add-xp", async(req, res) => {
+     try {
+        let data = req.body;
+        await con.query("UPDATE pets SET xp=xp+$1 WHERE pet_id = $2", [data.xp, data.pet_id]);
+        console.log(`200 OK: ${data.xp} X added to pet with ID ${data.pet_id}`);
+>>>>>>> 2018d7f (frontend xp implementation)
         res.status(200).send("works");
     } catch (e) {
         console.log(e);
@@ -24,6 +33,7 @@ app.post("/new-pet", async(req, res) => {
     }
 })
 
+<<<<<<< HEAD
 
 //frontend sends request to xp
 app.post("/add-xp", async(req, res) => {
@@ -49,6 +59,21 @@ app.get("/pet-info", async(req, res) =>{
         res.status(500).send("internal server error");
     }
 })
+=======
+//give frontend access to pet info
+app.get("/pet-info", async(req, res) =>{
+    try {
+        let data = req.body;
+        let result = await con.query("SELECT * FROM pets WHERE user_id = $1", [data.user_id]);
+        res.status(200).send(result.rows);
+    } catch (e) {
+        console.log(e);
+        res.status(500).send("internal server error");
+    }
+})
+
+
+>>>>>>> 2018d7f (frontend xp implementation)
 
 
 
@@ -56,8 +81,11 @@ app.get("/pet-info", async(req, res) =>{
 
 
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 2018d7f (frontend xp implementation)
 // app.get("/", async(req, res) => {
 //     // con.query("UPDATE pet SET pet_name= 'squirrel' WHERE username='maple'");
 //     const response = await con.query("SELECT * FROM users");

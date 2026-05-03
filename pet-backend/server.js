@@ -12,6 +12,19 @@ con.connect().then(() => console.log("Connected"));
 app.use(express.json());
 app.use(cors());
 
+//create a new pet in the pets table
+app.post("/new-pet", async(req, res) => {
+     try {
+        let data = req.body;
+        await con.query("INSERT INTO pets (pet_name, xp, user_id) VALUES ($1, $2, $3)", [req.pet_name, 0, req.user_id]);
+        res.status(200).send("works");
+    } catch (e) {
+        console.log(e);
+        res.status(500).send("internal server error");
+    }
+})
+
+
 //frontend sends request to xp
 app.post("/add-xp", async(req, res) => {
      try {

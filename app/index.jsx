@@ -50,6 +50,18 @@ export default function Screen() {
     fetchPetData();
   }, []);
 
+  async function createPet() {
+    try {
+      const response = await fetch(`${apiUrl}/add-xp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pet_name: "Squirrel", user_id: 1 }),
+      });
+    } catch (e) {
+      console.log(e); 
+    }
+  }
+
   const addXp = async (xp) => {
     try {
       const response = await fetch(`${apiUrl}/add-xp`, {
@@ -90,6 +102,12 @@ export default function Screen() {
               setXp(xp + PLAY_XP);
             }}>
               <Text>Play ({PLAY_XP} XP)</Text>
+            </Button>
+        
+            <Button onPress={() => {
+                  createPet();
+                }}>
+              <Text>Create Pet</Text>
             </Button>
         </View>
       </View>
